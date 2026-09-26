@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from calculator import add, subtract, multiply, divide, calculate
+from calculator import add, subtract, multiply, divide, power, calculate
 
 
 def test_add():
@@ -27,9 +27,18 @@ def test_divide_by_zero():
         divide(1, 0)
 
 
+def test_power():
+    assert power(2, 3) == 8
+
+
+def test_power_with_negative_exponent():
+    assert power(2, -1) == 0.5
+
+
 def test_calculate_dispatches_to_operation():
     assert calculate("add", 1, 2) == 3
     assert calculate("mul", 2, 3) == 6
+    assert calculate("pow", 2, 3) == 8
 
 
 def test_calculate_unknown_operation():
@@ -45,6 +54,16 @@ def test_cli_add():
     )
     assert result.returncode == 0
     assert result.stdout.strip() == "5.0"
+
+
+def test_cli_pow():
+    result = subprocess.run(
+        [sys.executable, "calculator.py", "pow", "2", "3"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip() == "8.0"
 
 
 def test_cli_divide_by_zero_exits_with_error():
